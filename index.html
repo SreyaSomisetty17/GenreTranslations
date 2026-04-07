@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Phone Is Thinking For You</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark: #0a0e1a;
+  --mid: #141829;
+  --card: #1a1f35;
+  --accent: #6c63ff;
+  --accent-glow: rgba(108, 99, 255, 0.3);
+  --coral: #ff4d6d;
+  --coral-glow: rgba(255, 77, 109, 0.25);
+  --light: #e8eaf6;
+  --muted: #8892b0;
+  --white: #ffffff;
+  --font-display: 'Sora', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--dark);
+  color: var(--light);
+}
+
+body {
+  font-family: var(--font-display);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ========= GRAIN OVERLAY ========= */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ========= SCROLL ANIMATIONS ========= */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========= HERO ========= */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 30% 50%, rgba(108,99,255,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(255,77,109,0.05) 0%, transparent 50%),
+              var(--dark);
+}
+
+.hero-badge {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(108,99,255,0.3);
+  padding: 0.4rem 1.2rem;
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  animation: fadeDown 1s ease 0.2s both;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 7vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  max-width: 900px;
+  animation: fadeDown 1s ease 0.4s both;
+}
+
+.hero h1 .highlight {
+  background: linear-gradient(135deg, var(--accent), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--muted);
+  max-width: 600px;
+  margin-top: 1.5rem;
+  font-weight: 300;
+  animation: fadeDown 1s ease 0.6s both;
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  animation: bounce 2s infinite, fadeDown 1s ease 1s both;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.scroll-indicator .arrow {
+  width: 20px;
+  height: 20px;
+  border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted);
+  transform: rotate(45deg);
+}
+
+@keyframes fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+
+/* ========= SECTIONS ========= */
+section {
+  padding: 6rem 2rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -1px;
+  margin-bottom: 1.5rem;
+  line-height: 1.15;
+}
+
+.section-text {
+  font-size: 1.05rem;
+  color: var(--muted);
+  max-width: 720px;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+/* ========= HOOK SECTION ========= */
+.hook-section {
+  background: var(--dark);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+
+.hook-card {
+  background: var(--card);
+  border-left: 4px solid var(--coral);
+  border-radius: 0 12px 12px 0;
+  padding: 2.5rem 3rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.hook-card::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 200px; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,77,109,0.03));
+}
+.hook-card .scenario {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--coral);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.hook-card p {
+  font-size: 1.1rem;
+  color: var(--light);
+  line-height: 1.8;
+}
+.hook-card .punchline {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--white);
+  margin: 1.5rem 0;
+  letter-spacing: -0.5px;
+}
+.hook-card .kicker {
+  color: var(--muted);
+  font-style: italic;
+  font-size: 1rem;
+}
+
+/* ========= STATS ========= */
+.stats-section {
+  background: linear-gradient(180deg, var(--dark) 0%, var(--mid) 100%);
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.stat-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(108,99,255,0.1);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(108,99,255,0.3);
+}
+.stat-number {
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent), var(--coral));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 0.75rem;
+}
+.stat-label {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.stat-source {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: rgba(136, 146, 176, 0.5);
+  margin-top: 1rem;
+  letter-spacing: 1px;
+}
+
+/* ========= AI FEATURES ========= */
+.features-section {
+  background: var(--mid);
+}
+.feature-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--card);
+  border-radius: 16px;
+  border: 1px solid rgba(108,99,255,0.08);
+  transition: border-color 0.3s ease;
+}
+.feature-row:hover {
+  border-color: rgba(108,99,255,0.25);
+}
+.feature-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+.feature-icon.bell { background: var(--coral-glow); }
+.feature-icon.algo { background: var(--accent-glow); }
+.feature-icon.predict { background: rgba(16, 185, 129, 0.15); }
+.feature-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: var(--white);
+}
+.feature-desc {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ========= RESEARCH ========= */
+.research-section {
+  background: var(--dark);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+.research-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.research-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem;
+  border-top: 3px solid var(--accent);
+  transition: transform 0.3s ease;
+}
+.research-card:hover { transform: translateY(-3px); }
+.research-card.warn { border-top-color: var(--coral); }
+.research-card h3 {
+  font-size: 1.3rem;
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+.research-card p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.8;
+  margin-bottom: 1rem;
+}
+.research-card .takeaway {
+  font-style: italic;
+  color: var(--coral);
+  font-size: 0.9rem;
+  border-left: 2px solid var(--coral);
+  padding-left: 1rem;
+}
+
+/* ========= LOOP DIAGRAM ========= */
+.loop-section {
+  background: var(--mid);
+  text-align: center;
+}
+.loop-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 3rem auto;
+}
+.loop-step {
+  padding: 1.8rem 1.5rem;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+.loop-step:hover { transform: scale(1.03); }
+.loop-step.s1 { background: var(--accent); }
+.loop-step.s2 { background: var(--coral); }
+.loop-step.s3 { background: var(--accent); }
+.loop-step.s4 { background: #7c3aed; }
+.loop-step .step-num {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+.loop-step .step-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--white);
+  line-height: 1.4;
+}
+.loop-arrows {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 1rem;
+}
+.loop-cite {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 2rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ========= COMPARISON ========= */
+.compare-section {
+  background: var(--dark);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.compare-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem;
+  border-top: 3px solid var(--accent);
+}
+.compare-card.negative { border-top-color: var(--coral); }
+.compare-card h3 {
+  font-size: 1.25rem;
+  color: var(--white);
+  margin-bottom: 1.5rem;
+}
+.compare-card.negative h3 { color: var(--coral); }
+.compare-card ul {
+  list-style: none;
+  padding: 0;
+}
+.compare-card li {
+  font-size: 0.95rem;
+  color: var(--muted);
+  padding: 0.6rem 0;
+  padding-left: 1.5rem;
+  position: relative;
+  line-height: 1.5;
+}
+.compare-card li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+.compare-card.negative li::before { color: var(--coral); }
+
+/* ========= PARADOX ========= */
+.paradox-section {
+  background: var(--mid);
+}
+.paradox-highlight {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 3rem;
+  border-left: 4px solid var(--accent);
+  margin: 2rem 0;
+}
+.paradox-highlight .key-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+.paradox-highlight p {
+  font-size: 1.15rem;
+  color: var(--light);
+  line-height: 1.8;
+}
+.paradox-highlight .em-text {
+  color: var(--coral);
+  font-weight: 700;
+}
+.paradox-implication {
+  background: var(--dark);
+  border-radius: 12px;
+  padding: 2rem 2.5rem;
+  margin-top: 1.5rem;
+}
+.paradox-implication p {
+  font-size: 1rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.paradox-implication strong {
+  color: var(--light);
+}
+
+/* ========= NUANCE ========= */
+.nuance-section {
+  background: var(--dark);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+
+/* ========= ACTIONS ========= */
+.actions-section {
+  background: var(--mid);
+}
+.action-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2rem 2.5rem;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid var(--accent);
+  transition: transform 0.3s ease;
+}
+.action-card:hover { transform: translateX(4px); }
+.action-card h3 {
+  font-size: 1.15rem;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+.action-card p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ========= CLOSING ========= */
+.closing {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background: radial-gradient(ellipse at 50% 50%, rgba(108,99,255,0.06) 0%, transparent 60%),
+              var(--dark);
+}
+.closing-text {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 700;
+  max-width: 750px;
+  line-height: 1.4;
+  letter-spacing: -0.5px;
+  margin-bottom: 2rem;
+}
+.closing-kicker {
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 600px;
+}
+
+/* ========= SOURCES ========= */
+.sources-section {
+  background: var(--mid);
+  border-top: 1px solid rgba(108,99,255,0.1);
+  padding-bottom: 4rem;
+}
+.sources-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1.5rem;
+}
+.sources-list li {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.75rem 0;
+  border-bottom: 1px solid rgba(136,146,176,0.1);
+  line-height: 1.6;
+  font-family: var(--font-mono);
+}
+.sources-list li span.num {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+/* ========= FOOTER ========= */
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.75rem;
+  color: rgba(136,146,176,0.4);
+  font-family: var(--font-mono);
+  letter-spacing: 1px;
+  background: var(--dark);
+}
+
+/* ========= RESPONSIVE ========= */
+@media (max-width: 768px) {
+  .research-grid, .compare-grid, .loop-container {
+    grid-template-columns: 1fr;
+  }
+  .feature-row {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .hook-card {
+    padding: 2rem;
+  }
+  section {
+    padding: 4rem 1.5rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ========= HERO ========= -->
+<div class="hero">
+  <div class="hero-badge">A Digital Essay</div>
+  <h1>Your Phone Is <span class="highlight">Thinking For You</span></h1>
+  <p class="hero-sub">How AI-powered features shape young adults' attention, habits, and decisions</p>
+  <div class="scroll-indicator">
+    <span>Scroll</span>
+    <div class="arrow"></div>
+  </div>
+</div>
+
+<!-- ========= THE HOOK ========= -->
+<section class="hook-section">
+  <div class="reveal">
+    <div class="section-label">01 — The Hook</div>
+    <h2 class="section-title">The Scroll Hole</h2>
+    <div class="hook-card">
+      <div class="scenario">Picture This</div>
+      <p>You sit down to study for an exam. Your phone buzzes — a news notification, AI-selected just for you based on what you've clicked before. You tap it. That article leads to a recommended video. That video leads to a social media scroll.</p>
+      <div class="punchline">Twenty minutes vanish.</div>
+      <p class="kicker">This isn't a lack of willpower — it's an engineered system designed to capture and hold your attention. And it's built into the phone in your pocket right now.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========= STATS ========= -->
+<section class="stats-section">
+  <div class="reveal">
+    <div class="section-label">02 — The Scale</div>
+    <h2 class="section-title">The Numbers Don't Lie</h2>
+    <p class="section-text">We aren't just using smartphones occasionally. We're living inside algorithm-driven environments — and those environments are shaped by artificial intelligence.</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">97%</div>
+        <div class="stat-label">of Americans aged 18–29 own a smartphone</div>
+        <div class="stat-source">Pew Research Center, 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">84%</div>
+        <div class="stat-label">of young adults use at least one social media platform daily</div>
+        <div class="stat-source">Gottfried, 2024</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">2+ hrs</div>
+        <div class="stat-label">average daily time spent on algorithm-driven apps</div>
+        <div class="stat-source">We Are Social, 2024</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= AI FEATURES ========= -->
+<section class="features-section">
+  <div class="reveal">
+    <div class="section-label">03 — The Mechanism</div>
+    <h2 class="section-title">What AI Is Doing on Your Phone</h2>
+    <p class="section-text">Three categories of AI features are actively shaping your attention — often without you noticing.</p>
+    <div class="feature-row">
+      <div class="feature-icon bell">🔔</div>
+      <div>
+        <div class="feature-title">Push Notifications</div>
+        <div class="feature-desc">AI learns when you're most likely to open your phone and times its alerts to hit you at exactly those moments. These aren't random — they're precision-timed to maximize engagement.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon algo">👁</div>
+      <div>
+        <div class="feature-title">Recommendation Algorithms</div>
+        <div class="feature-desc">TikTok's For You page, YouTube's Up Next, Spotify's Discover Weekly. These systems analyze your past behavior — what you watched, how long, what you skipped — to serve a never-ending, personalized feed.</div>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="feature-icon predict">🧠</div>
+      <div>
+        <div class="feature-title">Predictive Interfaces</div>
+        <div class="feature-desc">Autocomplete, smart replies, suggested actions. These features reduce friction, making it effortless to keep engaging with your device instead of putting it down.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= COGNITIVE RESEARCH ========= -->
+<section class="research-section">
+  <div class="reveal">
+    <div class="section-label">04 — The Evidence</div>
+    <h2 class="section-title">The Cognitive Cost</h2>
+    <p class="section-text">Research shows these features don't just distract us — they measurably alter how we think, remember, and decide.</p>
+    <div class="research-grid">
+      <div class="research-card">
+        <h3>Brain Drain</h3>
+        <p>Ward, Duke, Gneezy & Bos (2017) found that even when a smartphone is turned off and placed face-down, its mere presence significantly reduces working memory and cognitive capacity.</p>
+        <div class="takeaway">Your phone doesn't have to be on to affect your thinking.</div>
+      </div>
+      <div class="research-card warn">
+        <h3>Digital Cognition</h3>
+        <p>Tamilarasu & Shanmugasundaram (2023) reviewed how AI-powered technologies create measurable impacts on attention monitoring, memory retrieval, and decision-making processes.</p>
+        <div class="takeaway">AI features amplify the problem far beyond passive phone presence.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= REINFORCEMENT LOOP ========= -->
+<section class="loop-section">
+  <div class="reveal">
+    <div class="section-label">05 — The Cycle</div>
+    <h2 class="section-title">The Reinforcement Loop</h2>
+    <p class="section-text" style="margin: 0 auto 1rem;">This cycle repeats hundreds of times a day — and AI is optimizing every step.</p>
+    <div class="loop-container">
+      <div class="loop-step s1">
+        <div class="step-num">Step 01</div>
+        <div class="step-text">AI sends a personalized notification</div>
+      </div>
+      <div class="loop-step s2">
+        <div class="step-num">Step 02</div>
+        <div class="step-text">You check your phone (variable reward)</div>
+      </div>
+      <div class="loop-step s4">
+        <div class="step-num">Step 04</div>
+        <div class="step-text">Notifications become more targeted</div>
+      </div>
+      <div class="loop-step s3">
+        <div class="step-num">Step 03</div>
+        <div class="step-text">AI learns from your behavior</div>
+      </div>
+    </div>
+    <div class="loop-arrows">↻ the cycle repeats — getting more precise each time</div>
+    <p class="loop-cite">Montag & Diefenbach (2018) showed that habitual phone-checking becomes compulsive through variable reward schedules — the same mechanism behind slot machines. AI now optimizes these loops.</p>
+  </div>
+</section>
+
+<!-- ========= SHALLOW vs DEEP ========= -->
+<section class="compare-section">
+  <div class="reveal">
+    <div class="section-label">06 — The Shift</div>
+    <h2 class="section-title">From Deep Reading to Shallow Scrolling</h2>
+    <p class="section-text">Nicholas Carr argued in <em>The Shallows</em> (2020) that the internet pushes us toward fragmented information processing. AI personalization intensifies this shift dramatically.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>Deep Attention</h3>
+        <ul>
+          <li>Sustained focus on one task</li>
+          <li>Linear, reflective thinking</li>
+          <li>Information retention and recall</li>
+          <li>Critical evaluation of sources</li>
+        </ul>
+      </div>
+      <div class="compare-card negative">
+        <h3>Shallow Scrolling</h3>
+        <ul>
+          <li>Rapid, constant task-switching</li>
+          <li>Fragmented, surface-level processing</li>
+          <li>Preference for instant gratification</li>
+          <li>Passive consumption of curated feeds</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========= AWARENESS PARADOX ========= -->
+<section class="paradox-section">
+  <div class="reveal">
+    <div class="section-label">07 — The Paradox</div>
+    <h2 class="section-title">The Awareness Paradox</h2>
+    <div class="paradox-highlight">
+      <div class="key-label">Key Finding</div>
+      <p>More frequent social media use was linked to <span class="em-text">lower levels of algorithmic awareness and knowledge</span> — not higher. Young adults who grew up immersed in social media take algorithms for granted, engaging passively rather than questioning how content is presented to them.</p>
+    </div>
+    <div class="paradox-implication">
+      <p><strong>What this means:</strong> Even among those with higher algorithmic knowledge, cognitive understanding alone may not be enough to change behavior. Familiarity breeds complacency, not resistance. Knowing your feed is curated doesn't stop you from scrolling.</p>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--muted); font-style: italic; margin-top: 1.5rem; font-family: var(--font-mono);">Harvard Kennedy School Misinformation Review, 2025</p>
+  </div>
+</section>
+
+<!-- ========= IT'S NOT THAT SIMPLE ========= -->
+<section class="nuance-section">
+  <div class="reveal">
+    <div class="section-label">08 — The Nuance</div>
+    <h2 class="section-title">It's Not That Simple</h2>
+    <p class="section-text">This isn't a "phones are evil" argument. Tamilarasu & Shanmugasundaram (2023) acknowledge the duality: genuine benefits through efficiency alongside real problems of distraction and dependency.</p>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <h3>AI Features Help Us</h3>
+        <ul>
+          <li>Efficient access to relevant information</li>
+          <li>Personalized learning and discovery</li>
+          <li>Reduced cognitive load for routine tasks</li>
+          <li>User-friendly, intuitive design</li>
+        </ul>
+      </div>
+      <div class="compare-card negative">
+        <h3>AI Features Harm Us</h3>
+        <ul>
+          <li>Fragmented attention and reduced focus</li>
+          <li>Compulsive checking behaviors</li>
+          <li>Cognitive dependency on the device</li>
+          <li>Passive consumption over active thinking</li>
+        </ul>
+      </div>
+    </div>
+    <p class="section-text" style="margin-top: 2rem;">The issue isn't that AI is good or bad. It's that most young adults don't realize the trade-off they're making every time they pick up their phone.</p>
+  </div>
+</section>
+
+<!-- ========= ACTIONS ========= -->
+<section class="actions-section">
+  <div class="reveal">
+    <div class="section-label">09 — The Response</div>
+    <h2 class="section-title">So What Can We Do?</h2>
+    <div class="action-card">
+      <h3>For Individuals</h3>
+      <p>Audit your notification settings. Turn off AI-curated alerts. Set intentional screen-time boundaries. Practice noticing when you've been pulled into a scroll loop — that awareness alone is a meaningful first step.</p>
+    </div>
+    <div class="action-card">
+      <h3>For Educators</h3>
+      <p>Teach algorithmic literacy — not just "screen time bad," but how AI features are specifically designed to capture attention. Help students recognize the mechanisms, not just the symptoms.</p>
+    </div>
+    <div class="action-card">
+      <h3>For Tech Companies</h3>
+      <p>Design AI features that respect cognitive autonomy. Give users transparent controls over how algorithms shape their feeds — not just what content they see, but how the system decides what to show them.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ========= CLOSING ========= -->
+<div class="closing">
+  <div class="reveal">
+    <p class="closing-text">Your phone isn't just a tool anymore. It's a system that learns how to hold your attention — and it's getting better at it every day.</p>
+    <p class="closing-kicker">The question is whether we'll let it think for us — or start thinking for ourselves.</p>
+  </div>
+</div>
+
+<!-- ========= SOURCES ========= -->
+<section class="sources-section">
+  <div class="reveal">
+    <div class="section-label">Sources</div>
+    <h2 class="section-title">Works Cited</h2>
+    <ul class="sources-list">
+      <li><span class="num">1.</span> Pew Research Center. (2024). Mobile fact sheet. Pew Research Center.</li>
+      <li><span class="num">2.</span> Tamilarasu, A. & Shanmugasundaram, M. (2023). The impact of digital technology, social media, and artificial intelligence on cognitive functions: A review. <em>Frontiers in Cognition</em>, 2, 1203077.</li>
+      <li><span class="num">3.</span> Ward, A. F., Duke, K., Gneezy, A., & Bos, M. W. (2017). Brain drain: The mere presence of one's own smartphone reduces available cognitive capacity. <em>Journal of the Association for Consumer Research</em>, 2(2), 140–154.</li>
+      <li><span class="num">4.</span> Carr, N. (2020). <em>The Shallows: What the Internet Is Doing to Our Brains</em> (updated ed.). W. W. Norton.</li>
+      <li><span class="num">5.</span> Montag, C. & Diefenbach, S. (2018). Towards Homo Digitalis: Important research issues for psychology and the neurosciences at the dawn of the internet of things and the digital society. <em>Sustainability</em>, 10(2), 415.</li>
+      <li><span class="num">6.</span> Harvard Kennedy School Misinformation Review. (2025). When knowing more means doing less: Algorithmic knowledge and digital (dis)engagement among young adults.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  A Genre Translation Project — 2026
+</footer>
+
+<script>
+// Scroll reveal animation
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.15 });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
