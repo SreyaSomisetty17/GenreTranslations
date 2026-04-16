@@ -172,6 +172,112 @@ section {
   margin-bottom: 1.5rem;
 }
 
+/* ========= WHY WEBSITE ========= */
+.why-section {
+  background: var(--mid);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+.why-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem;
+  border-left: 4px solid var(--accent);
+  transition: transform 0.3s ease;
+}
+.why-card:nth-child(even) { border-left-color: var(--coral); }
+.why-card:hover { transform: translateY(-3px); }
+.why-card .why-icon {
+  font-size: 1.8rem;
+  margin-bottom: 0.75rem;
+}
+.why-card h3 {
+  font-size: 1.2rem;
+  color: var(--white);
+  margin-bottom: 0.75rem;
+}
+.why-card p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ========= BRAIN SCANS ========= */
+.brain-section {
+  background: var(--mid);
+}
+.brain-intro {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem 3rem;
+  border-left: 4px solid var(--accent);
+  margin-bottom: 2rem;
+}
+.brain-intro p {
+  font-size: 1.05rem;
+  color: var(--light);
+  line-height: 1.8;
+}
+.brain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+.brain-card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 2.5rem;
+  border-top: 3px solid var(--coral);
+  transition: transform 0.3s ease;
+}
+.brain-card:last-child { border-top-color: var(--accent); }
+.brain-card:hover { transform: translateY(-3px); }
+.brain-card h3 {
+  font-size: 1.3rem;
+  color: var(--coral);
+  margin-bottom: 0.75rem;
+}
+.brain-card:last-child h3 { color: var(--accent); }
+.brain-card p {
+  font-size: 0.95rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ========= FINDINGS ========= */
+.findings-section {
+  background: var(--dark);
+  border-top: 1px solid rgba(108,99,255,0.1);
+}
+.findings-list {
+  margin-top: 2rem;
+}
+.finding-item {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 1rem;
+  border-left: 4px solid var(--accent);
+  font-size: 1.05rem;
+  color: var(--light);
+  transition: transform 0.3s ease;
+}
+.finding-item:nth-child(even) { border-left-color: var(--coral); }
+.finding-item:hover { transform: translateX(4px); }
+
+/* ========= RESPONSIVE UPDATES ========= */
+@media (max-width: 768px) {
+  .why-grid, .brain-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ========= HOOK SECTION ========= */
 .hook-section {
   background: var(--dark);
@@ -589,7 +695,7 @@ footer {
 
 /* ========= RESPONSIVE ========= */
 @media (max-width: 768px) {
-  .research-grid, .compare-grid, .loop-container {
+  .research-grid, .compare-grid, .loop-container, .why-grid, .brain-grid {
     grid-template-columns: 1fr;
   }
   .feature-row {
@@ -618,6 +724,37 @@ footer {
   </div>
 </div>
 
+<!-- ========= WHY A WEBSITE ========= -->
+<section class="why-section">
+  <div class="reveal">
+    <div class="section-label">00 — The Translation</div>
+    <h2 class="section-title">Why a Website?</h2>
+    <p class="section-text">Choosing the right genre to reach young adults where they already are.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🌐</div>
+        <h3>Accessible Anywhere</h3>
+        <p>No downloads, no apps — just a link. Readers can access it from any device, anytime, matching how young adults consume content today.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">👥</div>
+        <h3>Speaks to the Audience</h3>
+        <p>Young adults are digital natives. A website is a familiar, native format — not a paper handout or academic PDF they'd scroll past.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🔍</div>
+        <h3>Visual + Interactive</h3>
+        <p>Websites support embedded visuals, diagrams, and scrollable sections — perfect for explaining complex research in a digestible, engaging way.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🖱️</div>
+        <h3>Mirrors the Topic</h3>
+        <p>This research is about how digital interfaces shape attention — delivering it as a website lets readers experience the very medium being discussed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ========= THE HOOK ========= -->
 <section class="hook-section">
   <div class="reveal">
@@ -625,9 +762,9 @@ footer {
     <h2 class="section-title">The Scroll Hole</h2>
     <div class="hook-card">
       <div class="scenario">Picture This</div>
-      <p>You sit down to study for an exam. Your phone buzzes — a news notification, AI-selected just for you based on what you've clicked before. You tap it. That article leads to a recommended video. That video leads to a social media scroll.</p>
-      <div class="punchline">Twenty minutes vanish.</div>
-      <p class="kicker">This isn't a lack of willpower — it's an engineered system designed to capture and hold your attention. And it's built into the phone in your pocket right now.</p>
+      <p>You sit down to study for a midterm. Your phone lights up — a notification, handpicked by AI just for you. You tap it. That article pulls you into a recommended video. That video drops you into a social media feed.</p>
+      <div class="punchline">Twenty minutes gone.</div>
+      <p class="kicker">This isn't about discipline. This is a system that was built to do exactly this. That notification was timed. That video was chosen. Every single step was engineered by an algorithm to keep you scrolling.</p>
     </div>
   </div>
 </section>
@@ -682,7 +819,7 @@ footer {
       <div class="feature-icon predict">🧠</div>
       <div>
         <div class="feature-title">Predictive Interfaces</div>
-        <div class="feature-desc">Autocomplete, smart replies, suggested actions. These features reduce friction, making it effortless to keep engaging with your device instead of putting it down.</div>
+        <div class="feature-desc">Autocomplete, smart replies, suggested actions. They're designed to remove every small obstacle so you never hit a moment where you think — okay, I should stop.</div>
       </div>
     </div>
   </div>
@@ -706,6 +843,28 @@ footer {
         <div class="takeaway">AI features amplify the problem far beyond passive phone presence.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ========= BRAIN SCANS ========= -->
+<section class="brain-section">
+  <div class="reveal">
+    <div class="section-label">04b — The Neuroscience</div>
+    <h2 class="section-title">It's Visible in Brain Scans</h2>
+    <div class="brain-intro">
+      <p>León Méndez, Padrón, Fumero & Marrero (2024) reviewed 21 fMRI studies and found that smartphone and internet overuse impair two key brain systems in young adults:</p>
+    </div>
+    <div class="brain-grid">
+      <div class="brain-card">
+        <h3>Reward Processing</h3>
+        <p>Every time you get that little dopamine hit from a notification or a like, your brain wants more of it — the response to notifications and likes becomes compulsive.</p>
+      </div>
+      <div class="brain-card">
+        <h3>Executive Function</h3>
+        <p>The part of your brain that's supposed to say "okay, put the phone down" is getting weaker — the ability to plan, focus, and resist impulses is diminished.</p>
+      </div>
+    </div>
+    <p style="font-size: 0.8rem; color: var(--muted); font-style: italic; margin-top: 1.5rem; font-family: var(--font-mono);">— Neuroscience & Biobehavioral Reviews, 2024</p>
   </div>
 </section>
 
@@ -735,6 +894,21 @@ footer {
     </div>
     <div class="loop-arrows">↻ the cycle repeats — getting more precise each time</div>
     <p class="loop-cite">Montag & Diefenbach (2018) showed that habitual phone-checking becomes compulsive through variable reward schedules — the same mechanism behind slot machines. AI now optimizes these loops.</p>
+  </div>
+</section>
+
+<!-- ========= WHAT RESEARCH KEEPS FINDING ========= -->
+<section class="findings-section">
+  <div class="reveal">
+    <div class="section-label">05b — The Pattern</div>
+    <h2 class="section-title">What the Research Keeps Finding</h2>
+    <p class="section-text">Wilmer, Sherman & Chein (2017) reviewed smartphone habits and cognitive functioning. The pattern is consistent:</p>
+    <div class="findings-list">
+      <div class="finding-item">More screen time = harder to stay focused</div>
+      <div class="finding-item">Heavier phone use makes you more impulsive</div>
+      <div class="finding-item">Jumping between apps makes it harder to ignore distractions</div>
+      <div class="finding-item">Heavy users tend to think less critically</div>
+    </div>
   </div>
 </section>
 
@@ -853,6 +1027,9 @@ footer {
       <li><span class="num">4.</span> Carr, N. (2020). <em>The Shallows: What the Internet Is Doing to Our Brains</em> (updated ed.). W. W. Norton.</li>
       <li><span class="num">5.</span> Montag, C. & Diefenbach, S. (2018). Towards Homo Digitalis: Important research issues for psychology and the neurosciences at the dawn of the internet of things and the digital society. <em>Sustainability</em>, 10(2), 415.</li>
       <li><span class="num">6.</span> Harvard Kennedy School Misinformation Review. (2025). When knowing more means doing less: Algorithmic knowledge and digital (dis)engagement among young adults.</li>
+      <li><span class="num">7.</span> Wilmer, H. H., Sherman, L. E., & Chein, J. M. (2017). Smartphones and cognition: A review of research exploring the links between mobile technology habits and cognitive functioning. <em>Frontiers in Psychology</em>, 8, 605.</li>
+      <li><span class="num">8.</span> León Méndez, M., Padrón, I., Fumero, A., & Marrero, R. J. (2024). Effects of internet and smartphone addiction on cognitive control in adolescents and young adults: A systematic review of fMRI studies. <em>Neuroscience & Biobehavioral Reviews</em>, 159, 105572.</li>
+      <li><span class="num">9.</span> Jylhä, V., Hirvainen, N., & Haider, J. (2024). Algorithmic recommendations enabling and constraining information practices among young people. <em>J. Documentation</em>, 80(7), 25–42.</li>
     </ul>
   </div>
 </section>
